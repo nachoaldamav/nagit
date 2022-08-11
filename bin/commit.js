@@ -90,15 +90,12 @@ const COMMIT_TYPES = {
 
       const renderIssues =
         issues.length > 0
-          ? issues
-              .map((issue) => `close ${issue}`)
-              .join(" ")
-              .concat(";")
+          ? "\n" + issues.map((issue) => `close ${issue}`).join(" ")
           : "";
 
-      const commessage = `${renderIssues} ${COMMIT_TYPES[commitType]}${
+      const commessage = `${COMMIT_TYPES[commitType]}${
         scope ? `(${scope}) ` : ""
-      }${title}${message ? `\n\n${message}` : ""}`;
+      }${title}${message ? `\n\n${message}` : ""} ${renderIssues}`;
 
       if (files.length > 0) {
         await execa("git", ["add", ...files]);
