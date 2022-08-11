@@ -77,6 +77,18 @@ const COMMIT_TYPES = {
         when: () => issues.length > 0,
       },
       {
+        type: "text",
+        name: "handIssues",
+        message: "Enter issues to close (separated by comma)",
+        when: () => issues.length === 0,
+      },
+      {
+        type: "text",
+        name: "breakingChange",
+        message: "Describe the breaking change (optional)",
+        default: "",
+      },
+      {
         type: "confirm",
         name: "push",
         message: "Push to remote?",
@@ -113,9 +125,21 @@ const COMMIT_TYPES = {
           ? "\n" + issues.map((issue) => `close ${issue}`).join(" ")
           : "";
 
+      const renderHandIssues =
+        answers.handIssues && answers.handIssues.length > 0
+          ? "\n" +
+            answers.handIssues.split(",").map((issue) => `close #${issue}`)
+          : "";
+
       const commessage = `${COMMIT_TYPES[commitType]}${
         scope ? `(${scope}) ` : ""
-      }${title}${message ? `\n\n${message}` : ""} ${renderIssues}`;
+      }${title}${
+        message ? `\n\n${message}` : ""
+      } ${renderIssues} ${renderHandIssues} ${
+        answers.breakingChange
+          ? `\n\nBREAKING CHANGE: ${answers.breakingChange}`
+          : ""
+      }`;
 
       if (files.length > 0) {
         await execa("git", ["add", ...files]);
