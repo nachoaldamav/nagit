@@ -6,6 +6,10 @@ import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
 
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8")
+);
+
 const COMMIT_TYPES = {
   feat: "feat ✨: ",
   fix: "fix 🐛: ",
@@ -24,6 +28,8 @@ const COMMIT_TYPES = {
   });
 
   const issues = await getRepoIssues();
+
+  let releasePrompt;
 
   return inquirer
     .prompt([
@@ -83,13 +89,27 @@ const COMMIT_TYPES = {
         message: "Push to remote?",
         default: false,
       },
+      {
+        type: "confirm",
+        name: "release",
+        message: "Create a release?",
+        default: false,
+      },
     ])
     .then(async (answers) => {
-      const { commitType, scope, title, message, files, push, issues } =
-        answers;
+      const {
+        commitType,
+        scope,
+        title,
+        message,
+        files,
+        push,
+        issues,
+        release,
+      } = answers;
 
       const renderIssues =
-        issues.length > 0
+        issues && issues.length > 0
           ? "\n" + issues.map((issue) => `close ${issue}`).join(" ")
           : "";
 
@@ -106,6 +126,17 @@ const COMMIT_TYPES = {
 
       if (push) {
         await execa("git", ["push"], { stdio: "inherit" });
+      }
+
+      if (release) {
+        // gh release create vX.X.X --generate-notes
+        await execa(
+          "gh",
+          ["release", "create", "v" + packageJson.version, "--generate-notes"],
+          {
+            stdio: "inherit",
+          }
+        );
       }
     })
     .catch((err) => {
