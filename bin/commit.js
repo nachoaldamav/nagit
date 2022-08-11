@@ -4,17 +4,7 @@ import { execa } from "execa";
 import gitChangedFiles from "git-changed-files";
 import { getRepoIssues } from "../functions/getIssues.js";
 import { updateVersion } from "../functions/updateVersion.js";
-
-const COMMIT_TYPES = {
-  feat: "feat ✨: ",
-  fix: "fix 🐛: ",
-  docs: "docs 📝: ",
-  style: "style 💅: ",
-  refactor: "refactor 🔨: ",
-  perf: "perf 🚀: ",
-  test: "test 🚨: ",
-  chore: "chore 🔧: ",
-};
+import { COMMIT_TYPES } from "../utils/commitTypes.js";
 
 (async () => {
   let committedGitFiles = await gitChangedFiles().catch((e) => {
