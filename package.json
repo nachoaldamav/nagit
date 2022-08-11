@@ -10,7 +10,6 @@
     "url": "https://github.com/nachoaldamav/nagit.git"
   },
   "scripts": {
-    "commit": "node src/commit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
