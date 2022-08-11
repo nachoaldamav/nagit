@@ -138,6 +138,17 @@ const COMMIT_TYPES = {
             stdio: "inherit",
           }
         );
+
+        await execa("git", ["add", "package.json"]);
+        await execa(
+          "git",
+          ["commit", "-m", `chore 🔧: bump version to v${newVersion}`],
+          {
+            stdio: "inherit",
+          }
+        );
+
+        await execa("git", ["push"], { stdio: "inherit" });
       }
     })
     .catch((err) => {
