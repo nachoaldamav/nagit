@@ -32,12 +32,6 @@ const COMMIT_TYPES = {
         when: () => committedGitFiles?.unCommittedFiles?.length > 0,
       },
       {
-        type: "confirm",
-        name: "addAll",
-        message: "Add all changes?",
-        default: false,
-      },
-      {
         type: "list",
         name: "commitType",
         message: "What do you want to do?",
@@ -85,9 +79,6 @@ const COMMIT_TYPES = {
 
       if (files.length > 0) {
         await execa("git", ["add", ...files]);
-        await execa("git", ["commit", "-m", commessage], { stdio: "inherit" });
-      } else if (addAll) {
-        await execa("git", ["add", "."]);
         await execa("git", ["commit", "-m", commessage], { stdio: "inherit" });
       } else {
         await execa("git", ["commit", "-m", commessage], { stdio: "inherit" });
