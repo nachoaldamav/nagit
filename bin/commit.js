@@ -2,13 +2,8 @@
 import inquirer from "inquirer";
 import { execa } from "execa";
 import gitChangedFiles from "git-changed-files";
-import fetch from "node-fetch";
-import fs from "fs";
-import path from "path";
-
-const packageJson = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8")
-);
+import { getRepoIssues } from "../functions/getIssues.js";
+import { updateVersion } from "../functions/updateVersion.js";
 
 const COMMIT_TYPES = {
   feat: "feat ✨: ",
@@ -28,8 +23,6 @@ const COMMIT_TYPES = {
   });
 
   const issues = await getRepoIssues();
-
-  let releasePrompt;
 
   return inquirer
     .prompt([
@@ -95,6 +88,13 @@ const COMMIT_TYPES = {
         message: "Create a release?",
         default: false,
       },
+      {
+        type: "list",
+        name: "releaseType",
+        message: "What type of release?",
+        choices: ["major", "minor", "patch"],
+        when: (answers) => answers.release,
+      },
     ])
     .then(async (answers) => {
       const {
@@ -129,10 +129,11 @@ const COMMIT_TYPES = {
       }
 
       if (release) {
-        // gh release create vX.X.X --generate-notes
+        const { releaseType } = answers;
+        const newVersion = updateVersion(releaseType);
         await execa(
           "gh",
-          ["release", "create", "v" + packageJson.version, "--generate-notes"],
+          ["release", "create", "v" + newVersion, "--generate-notes"],
           {
             stdio: "inherit",
           }
@@ -143,38 +144,3 @@ const COMMIT_TYPES = {
       console.log(err);
     });
 })();
-
-async function getRepoIssues() {
-  const cwd = process.cwd();
-  const packageJson = JSON.parse(
-    fs.readFileSync(path.join(cwd, "package.json"), "utf8")
-  );
-  const repo = packageJson.repository.url;
-
-  const repoName = repo.split("/").pop().replace(".git", "");
-  const repoOwner = repo.split("/").slice(-2)[0];
-  const isGithubRepo = repo.includes("github.com");
-
-  if (!isGithubRepo) {
-    return [];
-  }
-
-  const res = await fetch(
-    `https://api.github.com/repos/${repoOwner}/${repoName}/issues`,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-      },
-    }
-  )
-    .then((res) => res.json())
-    .catch((e) => {
-      console.error(e);
-      return [];
-    });
-
-  // Remove pull requests
-  const issues = res.filter((issue) => !issue.pull_request);
-
-  return issues;
-}
