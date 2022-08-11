@@ -131,13 +131,6 @@ const COMMIT_TYPES = {
       if (release) {
         const { releaseType } = answers;
         const newVersion = updateVersion(releaseType);
-        await execa(
-          "gh",
-          ["release", "create", "v" + newVersion, "--generate-notes"],
-          {
-            stdio: "inherit",
-          }
-        );
 
         await execa("git", ["add", "package.json"]);
         await execa(
@@ -149,6 +142,14 @@ const COMMIT_TYPES = {
         );
 
         await execa("git", ["push"], { stdio: "inherit" });
+
+        await execa(
+          "gh",
+          ["release", "create", "v" + newVersion, "--generate-notes"],
+          {
+            stdio: "inherit",
+          }
+        );
       }
     })
     .catch((err) => {
