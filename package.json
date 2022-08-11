@@ -5,6 +5,10 @@
   "main": "bin/index.js",
   "type": "module",
   "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nachoaldamav/nagit.git"
+  },
   "scripts": {
     "commit": "node src/commit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +23,7 @@
     "execa": "^6.1.0",
     "git-changed-files": "^1.0.0",
     "inquirer": "^9.1.0",
+    "node-fetch": "^3.2.10",
     "staged-git-files": "^1.3.0"
   }
 }

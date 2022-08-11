@@ -2,6 +2,9 @@
 import inquirer from "inquirer";
 import { execa } from "execa";
 import gitChangedFiles from "git-changed-files";
+import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
 
 const COMMIT_TYPES = {
   feat: "feat ✨: ",
@@ -19,6 +22,8 @@ const COMMIT_TYPES = {
     console.error(e);
     return [];
   });
+
+  const issues = await getRepoIssues();
 
   return inquirer
     .prompt([
@@ -63,6 +68,16 @@ const COMMIT_TYPES = {
         message: "Commit message:",
       },
       {
+        type: "checkbox",
+        name: "issues",
+        message: "Select issues to close",
+        choices: issues.map((issue) => ({
+          name: issue.title,
+          value: "#" + issue.number,
+        })),
+        when: () => issues.length > 0,
+      },
+      {
         type: "confirm",
         name: "push",
         message: "Push to remote?",
@@ -70,10 +85,18 @@ const COMMIT_TYPES = {
       },
     ])
     .then(async (answers) => {
-      const { addAll, commitType, scope, title, message, files, push } =
+      const { commitType, scope, title, message, files, push, issues } =
         answers;
 
-      const commessage = `${COMMIT_TYPES[commitType]}${
+      const renderIssues =
+        issues.length > 0
+          ? issues
+              .map((issue) => `closes #${issue}`)
+              .join(" ")
+              .concat(";")
+          : "";
+
+      const commessage = `${renderIssues} ${COMMIT_TYPES[commitType]}${
         scope ? `(${scope}) ` : ""
       }${title}${message ? `\n\n${message}` : ""}`;
 
@@ -92,3 +115,38 @@ const COMMIT_TYPES = {
       console.log(err);
     });
 })();
+
+async function getRepoIssues() {
+  const cwd = process.cwd();
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(cwd, "package.json"), "utf8")
+  );
+  const repo = packageJson.repository.url;
+
+  const repoName = repo.split("/").pop().replace(".git", "");
+  const repoOwner = repo.split("/").slice(-2)[0];
+  const isGithubRepo = repo.includes("github.com");
+
+  if (!isGithubRepo) {
+    return [];
+  }
+
+  const res = await fetch(
+    `https://api.github.com/repos/${repoOwner}/${repoName}/issues`,
+    {
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+      },
+    }
+  )
+    .then((res) => res.json())
+    .catch((e) => {
+      console.error(e);
+      return [];
+    });
+
+  // Remove pull requests
+  const issues = res.filter((issue) => !issue.pull_request);
+
+  return issues;
+}
