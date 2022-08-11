@@ -4,6 +4,7 @@
   "description": "",
   "main": "bin/index.js",
   "type": "module",
+  "preferGlobal": true,
   "scripts": {
     "commit": "node src/commit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
