@@ -91,7 +91,7 @@ const COMMIT_TYPES = {
       const renderIssues =
         issues.length > 0
           ? issues
-              .map((issue) => `closes #${issue}`)
+              .map((issue) => `close ${issue}`)
               .join(" ")
               .concat(";")
           : "";
