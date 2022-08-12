@@ -12,9 +12,11 @@ import chalk from "chalk";
 const cwd = process.cwd();
 
 (async () => {
-  const currentBranch = await execa("git rev-parse --abbrev-ref HEAD").then(
-    (res) => res.stdout.trim()
-  );
+  const currentBranch = await execa("git", [
+    "rev-parse",
+    "--abbrev-ref",
+    "HEAD",
+  ]).then((res) => res.stdout.trim());
 
   let committedGitFiles = await gitChangedFiles({
     baseBranch: currentBranch,
