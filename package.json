@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "5.0.1",
     "execa": "6.1.0",
     "git-changed-files": "1.0.0",
     "git-untracked": "1.0.0",

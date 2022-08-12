@@ -8,6 +8,7 @@ import path from "path";
 import { listGHIssues } from "../functions/listGHIssues.js";
 import { cliAuth } from "../functions/cliAuth.js";
 import { execa } from "execa";
+import chalk from "chalk";
 const cwd = process.cwd();
 
 (async () => {
@@ -24,13 +25,15 @@ const cwd = process.cwd();
 
   const isLogged = await cliAuth();
 
-  console.log(
-    `${
-      isLogged
-        ? "Logged in GH Cli, GH Features available"
-        : "Not logged in GH Cli, GH Features unavailable"
-    }`
-  );
+  if (!isLogged) {
+    console.log(
+      chalk.red(
+        "Not logged in GH Cli, GH Features unavailable. You can still commit and push."
+      )
+    );
+  } else {
+    console.log(chalk.green("Logged in GH Cli, GH Features available!"));
+  }
 
   const cliIssues = (isLogged && (await listGHIssues())) || [];
 
@@ -114,7 +117,7 @@ const cwd = process.cwd();
       {
         type: "text",
         name: "handIssues",
-        message: "Enter issues to close (separated by comma)",
+        message: "Enter issues to close (separated by comma, optional)",
         when: () => issues.length === 0,
       },
       {
