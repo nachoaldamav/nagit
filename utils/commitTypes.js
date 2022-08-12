@@ -7,4 +7,5 @@ export const COMMIT_TYPES = {
   perf: "perf 🚀: ",
   test: "test 🚨: ",
   chore: "chore 🔧: ",
+  types: "types 📝: ",
 };

@@ -66,6 +66,7 @@ const cwd = process.cwd();
           "fix",
           "docs",
           "style",
+          "types",
           "refactor",
           "test",
           "perf",
