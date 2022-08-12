@@ -26,7 +26,7 @@ const cwd = process.cwd();
       if (err) {
         reject(err);
       } else {
-        resolve(files.map((file) => path.relative(cwd, file)));
+        resolve(files.map((file) => path.relative(cwd, file)) || []);
       }
     });
   });
