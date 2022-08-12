@@ -42,7 +42,7 @@ const cwd = process.cwd();
   ).filter((file) => file);
 
   const uncommited =
-    committedGitFiles.unCommittedFiles.length > 0
+    committedGitFiles?.unCommittedFiles?.length > 0
       ? [...committedGitFiles.unCommittedFiles]
       : [];
 
