@@ -17,19 +17,29 @@ const cwd = process.cwd();
 
   const isLogged = await cliAuth();
 
+  console.log(
+    `${
+      isLogged
+        ? "Logged in GH Cli, GH Features available"
+        : "Not logged in GH Cli, GH Features unavailable"
+    }`
+  );
+
   const cliIssues = (isLogged && (await listGHIssues())) || [];
 
   const issues = await getRepoIssues();
 
-  const untrackedPromise = await new Promise((resolve, reject) => {
-    gitUntracked(".", (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files.map((file) => path.relative(cwd, file)) || []);
-      }
-    });
-  });
+  const untrackedPromise = (
+    await new Promise((resolve, reject) => {
+      gitUntracked(".", (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files.map((file) => path.relative(cwd, file)) || []);
+        }
+      });
+    })
+  ).filter((file) => file);
 
   const files =
     [...committedGitFiles.unCommittedFiles, ...untrackedPromise] || [];
