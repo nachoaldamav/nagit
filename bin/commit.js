@@ -6,7 +6,8 @@ import { callback } from "../functions/promptCallback.js";
 import gitUntracked from "git-untracked";
 import path from "path";
 import { listGHIssues } from "../functions/listGHIssues.js";
-const cwd = process.cwd().length;
+import { cliAuth } from "../functions/cliAuth.js";
+const cwd = process.cwd();
 
 (async () => {
   let committedGitFiles = await gitChangedFiles().catch((e) => {
@@ -14,25 +15,24 @@ const cwd = process.cwd().length;
     return [];
   });
 
-  const cliIssues = await listGHIssues();
+  const isLogged = await cliAuth();
 
-  let untrackedGitFiles;
-
-  gitUntracked(".", (err, files) => {
-    if (err) {
-      console.error(err);
-      return [];
-    }
-
-    untrackedGitFiles = files.map((file) =>
-      path.resolve(file).slice(cwd).replace(/\\/g, "/").slice(1)
-    );
-  });
+  const cliIssues = (isLogged && (await listGHIssues())) || [];
 
   const issues = await getRepoIssues();
 
+  const untrackedPromise = await new Promise((resolve, reject) => {
+    gitUntracked(".", (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(files.map((file) => path.relative(cwd, file)));
+      }
+    });
+  });
+
   const files =
-    [...committedGitFiles.unCommittedFiles, ...untrackedGitFiles] || [];
+    [...committedGitFiles.unCommittedFiles, ...untrackedPromise] || [];
 
   return inquirer
     .prompt([
@@ -112,6 +112,7 @@ const cwd = process.cwd().length;
         name: "release",
         message: "Create a release?",
         default: false,
+        when: () => isLogged,
       },
       {
         type: "list",
