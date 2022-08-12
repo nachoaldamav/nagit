@@ -1,10 +1,11 @@
 #! /usr/bin/env node
 import inquirer from "inquirer";
-import { execa } from "execa";
 import gitChangedFiles from "git-changed-files";
 import { getRepoIssues } from "../functions/getIssues.js";
-import { updateVersion } from "../functions/updateVersion.js";
-import { COMMIT_TYPES } from "../utils/commitTypes.js";
+import { callback } from "../functions/promptCallback.js";
+import gitUntracked from "git-untracked";
+import path from "path";
+const cwd = process.cwd().length;
 
 (async () => {
   let committedGitFiles = await gitChangedFiles().catch((e) => {
@@ -12,7 +13,23 @@ import { COMMIT_TYPES } from "../utils/commitTypes.js";
     return [];
   });
 
+  let untrackedGitFiles;
+
+  gitUntracked(".", (err, files) => {
+    if (err) {
+      console.error(err);
+      return [];
+    }
+
+    untrackedGitFiles = files.map((file) =>
+      path.resolve(file).slice(cwd).replace(/\\/g, "/").slice(1)
+    );
+  });
+
   const issues = await getRepoIssues();
+
+  const files =
+    [...committedGitFiles.unCommittedFiles, ...untrackedGitFiles] || [];
 
   return inquirer
     .prompt([
@@ -20,10 +37,8 @@ import { COMMIT_TYPES } from "../utils/commitTypes.js";
         type: "checkbox",
         name: "files",
         message: "Select files to commit",
-        choices: committedGitFiles.unCommittedFiles
-          ? committedGitFiles.unCommittedFiles
-          : [],
-        when: () => committedGitFiles?.unCommittedFiles?.length > 0,
+        choices: files ? files : [],
+        loop: false,
       },
       {
         type: "list",
@@ -98,74 +113,7 @@ import { COMMIT_TYPES } from "../utils/commitTypes.js";
         when: (answers) => answers.release,
       },
     ])
-    .then(async (answers) => {
-      const {
-        commitType,
-        scope,
-        title,
-        message,
-        files,
-        push,
-        issues,
-        release,
-      } = answers;
-
-      const renderIssues =
-        issues && issues.length > 0
-          ? "\n" + issues.map((issue) => `close ${issue}`).join(" ")
-          : "";
-
-      const renderHandIssues =
-        answers.handIssues && answers.handIssues.length > 0
-          ? "\n" +
-            answers.handIssues.split(",").map((issue) => `close #${issue}`)
-          : "";
-
-      const commessage = `${COMMIT_TYPES[commitType]}${
-        scope ? `(${scope}) ` : ""
-      }${title}${
-        message ? `\n\n${message}` : ""
-      } ${renderIssues} ${renderHandIssues} ${
-        answers.breakingChange
-          ? `\n\nBREAKING CHANGE: ${answers.breakingChange}`
-          : ""
-      }`;
-
-      if (files.length > 0) {
-        await execa("git", ["add", ...files]);
-        await execa("git", ["commit", "-m", commessage], { stdio: "inherit" });
-      } else {
-        await execa("git", ["commit", "-m", commessage], { stdio: "inherit" });
-      }
-
-      if (push) {
-        await execa("git", ["push"], { stdio: "inherit" });
-      }
-
-      if (release) {
-        const { releaseType } = answers;
-        const newVersion = updateVersion(releaseType);
-
-        await execa("git", ["add", "package.json"]);
-        await execa(
-          "git",
-          ["commit", "-m", `chore 🔧: bump version to v${newVersion}`],
-          {
-            stdio: "inherit",
-          }
-        );
-
-        await execa("git", ["push"], { stdio: "inherit" });
-
-        await execa(
-          "gh",
-          ["release", "create", "v" + newVersion, "--generate-notes"],
-          {
-            stdio: "inherit",
-          }
-        );
-      }
-    })
+    .then(async (answers) => callback(answers))
     .catch((err) => {
       console.log(err);
     });
