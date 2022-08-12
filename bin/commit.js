@@ -7,10 +7,17 @@ import gitUntracked from "git-untracked";
 import path from "path";
 import { listGHIssues } from "../functions/listGHIssues.js";
 import { cliAuth } from "../functions/cliAuth.js";
+import { execa } from "execa";
 const cwd = process.cwd();
 
 (async () => {
-  let committedGitFiles = await gitChangedFiles().catch((e) => {
+  const currentBranch = await execa("git rev-parse --abbrev-ref HEAD").then(
+    (res) => res.stdout.trim()
+  );
+
+  let committedGitFiles = await gitChangedFiles({
+    baseBranch: currentBranch,
+  }).catch((e) => {
     console.error(e);
     return [];
   });
