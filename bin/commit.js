@@ -41,8 +41,12 @@ const cwd = process.cwd();
     })
   ).filter((file) => file);
 
-  const files =
-    [...(committedGitFiles.unCommittedFiles || []), ...untrackedPromise] || [];
+  const uncommited =
+    committedGitFiles.unCommittedFiles.length > 0
+      ? [...committedGitFiles.unCommittedFiles]
+      : [];
+
+  const untracked = untrackedPromise.length > 0 ? [...untrackedPromise] : [];
 
   return inquirer
     .prompt([
@@ -50,7 +54,7 @@ const cwd = process.cwd();
         type: "checkbox",
         name: "files",
         message: "Select files to commit",
-        choices: files ? files : [],
+        choices: [...uncommited, ...untracked],
         loop: false,
       },
       {
