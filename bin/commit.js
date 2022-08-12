@@ -5,6 +5,7 @@ import { getRepoIssues } from "../functions/getIssues.js";
 import { callback } from "../functions/promptCallback.js";
 import gitUntracked from "git-untracked";
 import path from "path";
+import { listGHIssues } from "../functions/listGHIssues.js";
 const cwd = process.cwd().length;
 
 (async () => {
@@ -12,6 +13,8 @@ const cwd = process.cwd().length;
     console.error(e);
     return [];
   });
+
+  const cliIssues = await listGHIssues();
 
   let untrackedGitFiles;
 
@@ -54,6 +57,7 @@ const cwd = process.cwd().length;
           "perf",
           "chore",
         ],
+        loop: false,
       },
       {
         type: "text",
@@ -75,11 +79,15 @@ const cwd = process.cwd().length;
         type: "checkbox",
         name: "issues",
         message: "Select issues to close",
-        choices: issues.map((issue) => ({
-          name: issue.title,
-          value: "#" + issue.number,
-        })),
+        choices:
+          cliIssues ||
+          issues.map((issue) => ({
+            name: issue.title,
+            value: "#" + issue.number,
+          })),
         when: () => issues.length > 0,
+        loop: false,
+        pageSize: 10,
       },
       {
         type: "text",
