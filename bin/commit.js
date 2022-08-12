@@ -42,7 +42,7 @@ const cwd = process.cwd();
   ).filter((file) => file);
 
   const files =
-    [...committedGitFiles.unCommittedFiles, ...untrackedPromise] || [];
+    [...(committedGitFiles.unCommittedFiles || []), ...untrackedPromise] || [];
 
   return inquirer
     .prompt([
