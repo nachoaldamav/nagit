@@ -121,7 +121,7 @@ const cwd = process.cwd().length;
         when: (answers) => answers.release,
       },
     ])
-    .then(async (answers) => callback(answers))
+    .then(async (answers) => await callback(answers))
     .catch((err) => {
       console.log(err);
     });

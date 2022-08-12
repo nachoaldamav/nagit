@@ -35,7 +35,7 @@ export async function callback(answers) {
     await createCommit(commessage);
   }
 
-  if (push) pushCommit();
+  if (push) await pushCommit();
 
-  if (release) createRelease(answers.releaseType);
+  if (release) await createRelease(answers.releaseType);
 }

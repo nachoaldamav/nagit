@@ -12,10 +12,13 @@ export async function listGHIssues() {
     .then((result) => result.stdout)
     .catch((error) => {
       console.log(error);
+      return null;
     });
 
-  return JSON.parse(issues).map((issue) => ({
-    name: issue.title,
-    value: "#" + issue.number,
-  }));
+  return (
+    JSON.parse(issues).map((issue) => ({
+      name: issue.title,
+      value: "#" + issue.number,
+    })) || null
+  );
 }
