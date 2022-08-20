@@ -12,7 +12,6 @@ import chalk from "chalk";
 const cwd = process.cwd();
 
 (async () => {
-  // git rev-parse --abbrev-ref HEAD
   const currentBranch = await execa("git", [
     "rev-parse",
     "--abbrev-ref",
