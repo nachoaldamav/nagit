@@ -10,7 +10,7 @@ export async function createRelease(type, monorepo) {
     "HEAD",
   ]).then((res) => res.stdout.trim());
 
-  if (monorepo.length > 0) {
+  if (monorepo && monorepo.length > 0) {
     for await (const repo of monorepo) {
       await updatePackage(repo, type);
     }
