@@ -9,9 +9,11 @@ import { listGHIssues } from "../functions/listGHIssues.js";
 import { cliAuth } from "../functions/cliAuth.js";
 import { execa } from "execa";
 import chalk from "chalk";
+import { isMono } from "../functions/monorepo.js";
 const cwd = process.cwd();
 
 (async () => {
+  const mono = isMono();
   const currentBranch = await execa("git", [
     "rev-parse",
     "--abbrev-ref",
@@ -147,6 +149,15 @@ const cwd = process.cwd();
         message: "What type of release?",
         choices: ["major", "minor", "patch"],
         when: (answers) => answers.release,
+      },
+      {
+        type: "checkbox",
+        name: "monorepo",
+        message:
+          "Select package(s) to update (Base package will always be updated)",
+        choices: mono.files,
+        when: (answers) => answers.release && mono.isMono,
+        loop: false,
       },
     ])
     .then(async (answers) => await callback(answers))

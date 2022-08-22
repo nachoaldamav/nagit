@@ -37,5 +37,7 @@ export async function callback(answers) {
 
   if (push) await pushCommit();
 
-  if (release) await createRelease(answers.releaseType);
+  if (release) {
+    await createRelease(answers.releaseType, answers.monorepo);
+  }
 }
