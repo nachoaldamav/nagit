@@ -15,7 +15,7 @@ export function isMono() {
   };
 }
 
-export async function updatePackage(file, type) {
+export async function updatePackage(file: string, type: string) {
   const cwd = process.cwd();
   let packageJson = JSON.parse(fs.readFileSync(path.join(cwd, file), "utf8"));
   const { version } = packageJson;

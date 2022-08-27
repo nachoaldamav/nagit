@@ -2,13 +2,13 @@ import { execa } from "execa";
 import { updatePackage } from "./monorepo.js";
 import { updateVersion } from "./updateVersion.js";
 
-export async function createRelease(type, monorepo) {
+export async function createRelease(type: string, monorepo: string[]) {
   let newVersion;
   const currentBranch = await execa("git", [
     "rev-parse",
     "--abbrev-ref",
     "HEAD",
-  ]).then((res) => res.stdout.trim());
+  ]).then((res: { stdout: string }) => res.stdout.trim());
 
   if (monorepo && monorepo.length > 0) {
     for await (const repo of monorepo) {

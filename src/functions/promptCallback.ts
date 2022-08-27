@@ -4,7 +4,7 @@ import { createCommit } from "./createCommit.js";
 import { createRelease } from "./createRelease.js";
 import { pushCommit } from "./push.js";
 
-export async function callback(answers) {
+export async function callback(answers: ANSWERS) {
   const { commitType, scope, title, message, files, push, issues, release } =
     answers;
 
@@ -41,3 +41,27 @@ export async function callback(answers) {
     await createRelease(answers.releaseType, answers.monorepo);
   }
 }
+
+type ANSWERS = {
+  commitType:
+    | "feat"
+    | "fix"
+    | "docs"
+    | "perf"
+    | "refactor"
+    | "style"
+    | "test"
+    | "chore"
+    | "types";
+  scope: string;
+  title: string;
+  message: string;
+  files: string[];
+  push: boolean;
+  issues: string[];
+  release: boolean;
+  releaseType: string;
+  monorepo: string[];
+  handIssues: string;
+  breakingChange: string;
+};

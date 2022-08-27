@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-export function updateVersion(type) {
+export function updateVersion(type: string) {
   const cwd = process.cwd();
   const packageJson = JSON.parse(
     fs.readFileSync(path.join(cwd, "package.json"), "utf8")

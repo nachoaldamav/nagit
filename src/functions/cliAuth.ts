@@ -2,7 +2,7 @@ import { execa } from "execa";
 
 export async function cliAuth() {
   return await execa("gh", ["auth", "status", "--show-token"])
-    .then((result) => {
+    .then((result: { stdout: string }) => {
       if (result.stdout.includes("not logged into")) {
         return false;
       } else {
