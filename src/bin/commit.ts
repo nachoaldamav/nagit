@@ -10,6 +10,7 @@ import { cliAuth } from "../functions/cliAuth.js";
 import { execa } from "execa";
 import chalk from "chalk";
 import { isMono } from "../functions/monorepo.js";
+import ora from "ora";
 const cwd = process.cwd();
 
 export async function commit() {
@@ -18,7 +19,12 @@ export async function commit() {
     "rev-parse",
     "--abbrev-ref",
     "HEAD",
-  ]).then((res) => res.stdout.trim());
+  ])
+    .then((res) => res.stdout.trim())
+    .catch(() => {
+      ora(chalk.red("You are not inside a git repository!")).fail();
+      process.exit(1);
+    });
 
   let committedGitFiles = await gitChangedFiles({
     baseBranch: currentBranch,

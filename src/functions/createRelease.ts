@@ -1,6 +1,8 @@
 import { execa } from "execa";
 import { updatePackage } from "./monorepo.js";
 import { updateVersion } from "./updateVersion.js";
+import ora from "ora";
+import chalk from "chalk";
 
 export async function createRelease(type: string, monorepo: string[]) {
   let newVersion;
@@ -8,7 +10,12 @@ export async function createRelease(type: string, monorepo: string[]) {
     "rev-parse",
     "--abbrev-ref",
     "HEAD",
-  ]).then((res: { stdout: string }) => res.stdout.trim());
+  ])
+    .then((res: { stdout: string }) => res.stdout.trim())
+    .catch(() => {
+      ora(chalk.red("Error when trying to get current branch!")).fail();
+      process.exit(1);
+    });
 
   if (monorepo && monorepo.length > 0) {
     for await (const repo of monorepo) {
