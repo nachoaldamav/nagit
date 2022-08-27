@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "commit": "./bin/commit.js"
+    "ncommit": "./bin/commit.js"
   },
   "keywords": [],
   "author": "",
