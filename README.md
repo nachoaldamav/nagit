@@ -10,6 +10,8 @@ npm install -g nagit
 nagit commit
 ```
 
+![nagit-quickstart.gif](https://github.com/nachoaldamav/nagit/blob/master/nagit-quickstart.gif?raw=true)
+
 ## Usage as project-scope dependency
 
 You should add the dependency to your package.json (>0.0.20) and execute `npx nagit`.
