@@ -17,7 +17,7 @@ export async function getRepoIssues() {
     return [];
   }
 
-  const res = await fetch(
+  const res: any = await fetch(
     `https://api.github.com/repos/${repoOwner}/${repoName}/issues`,
     {
       headers: {
@@ -32,7 +32,11 @@ export async function getRepoIssues() {
     });
 
   // Remove pull requests
-  const issues = res.filter((issue) => !issue.pull_request);
+  const issues = res.filter((issue: ISSUES) => !issue.pull_request);
 
   return issues;
 }
+
+export type ISSUES = {
+  pull_request: string;
+};

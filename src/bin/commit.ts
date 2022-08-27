@@ -12,7 +12,7 @@ import chalk from "chalk";
 import { isMono } from "../functions/monorepo.js";
 const cwd = process.cwd();
 
-(async () => {
+export async function commit() {
   const mono = isMono();
   const currentBranch = await execa("git", [
     "rev-parse",
@@ -22,7 +22,7 @@ const cwd = process.cwd();
 
   let committedGitFiles = await gitChangedFiles({
     baseBranch: currentBranch,
-  }).catch((e) => {
+  }).catch((e: any) => {
     console.error(e);
     return [];
   });
@@ -43,23 +43,31 @@ const cwd = process.cwd();
 
   const issues = await getRepoIssues();
 
-  const untrackedPromise = (
-    await new Promise((resolve, reject) => {
-      gitUntracked(".", (err, files) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(files.map((file) => path.relative(cwd, file)) || []);
-        }
-      });
-    })
-  ).filter((file) => file);
+  // Fix this function in typescript
+  // @ts-ignore-next-line
+  const untrackedPromise = // @ts-ignore-next-line
+    (
+      await new Promise((resolve, reject) => {
+        // @ts-ignore-next-line
+        gitUntracked(".", (err, files) => {
+          if (err) {
+            reject(err);
+          } else {
+            // @ts-ignore-next-line
+            resolve(files.map((file) => path.relative(cwd, file)) || []);
+          }
+        });
+      })
+    )
+      // @ts-ignore-next-line
+      .filter((file) => file);
 
   const uncommited =
     committedGitFiles?.unCommittedFiles?.length > 0
       ? [...committedGitFiles.unCommittedFiles]
       : [];
 
+  //@ts-ignore-next-line
   const untracked = untrackedPromise.length > 0 ? [...untrackedPromise] : [];
 
   return inquirer
@@ -110,7 +118,7 @@ const cwd = process.cwd();
         message: "Select issues to close",
         choices:
           cliIssues ||
-          issues.map((issue) => ({
+          issues.map((issue: { title: string; number: number }) => ({
             name: issue.title,
             value: "#" + issue.number,
           })),
@@ -164,4 +172,4 @@ const cwd = process.cwd();
     .catch((err) => {
       console.log(err);
     });
-})();
+}

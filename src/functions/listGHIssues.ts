@@ -16,7 +16,7 @@ export async function listGHIssues() {
     });
 
   return (
-    JSON.parse(issues).map((issue) => ({
+    JSON.parse(issues as string).map((issue: any) => ({
       name: issue.title,
       value: "#" + issue.number,
     })) || null

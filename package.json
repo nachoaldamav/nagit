@@ -10,21 +10,32 @@
     "url": "https://github.com/nachoaldamav/nagit.git"
   },
   "scripts": {
+    "dev": "swc ./src -d ./build --watch",
+    "build": "swc ./src -d ./build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "ncommit": "./bin/commit.js"
+    "nagit": "./build/bin/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/inquirer": "^9.0.1",
     "chalk": "5.0.1",
     "execa": "6.1.0",
     "git-changed-files": "1.0.0",
     "git-untracked": "1.0.0",
-    "glob": "^8.0.3",
+    "glob": "8.0.3",
     "inquirer": "9.1.0",
-    "node-fetch": "3.2.10"
+    "node-fetch": "3.2.10",
+    "ora": "^6.1.2"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.244",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^18.7.13",
+    "chokidar": "^3.5.3"
   }
 }
