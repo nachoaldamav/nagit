@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 import inquirer from "inquirer";
 import gitChangedFiles from "git-changed-files";
 import { getRepoIssues } from "../functions/getIssues.js";
@@ -11,20 +10,13 @@ import { execa } from "execa";
 import chalk from "chalk";
 import { isMono } from "../functions/monorepo.js";
 import ora from "ora";
+import { getCurrentBranch } from "../functions/currentBranch.js";
 const cwd = process.cwd();
 
 export async function commit() {
   const mono = isMono();
-  const currentBranch = await execa("git", [
-    "rev-parse",
-    "--abbrev-ref",
-    "HEAD",
-  ])
-    .then((res) => res.stdout.trim())
-    .catch(() => {
-      ora(chalk.red("You are not inside a git repository!")).fail();
-      process.exit(1);
-    });
+
+  const currentBranch = await getCurrentBranch();
 
   let committedGitFiles = await gitChangedFiles({
     baseBranch: currentBranch,

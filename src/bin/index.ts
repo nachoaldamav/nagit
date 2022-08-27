@@ -3,6 +3,7 @@ import chalk from "chalk";
 import process from "process";
 import { commit } from "./commit.js";
 import ora from "ora";
+import { switchBranch } from "./switchBranch.js";
 
 (async () => {
   const args = process.argv.slice(2);
@@ -16,6 +17,8 @@ import ora from "ora";
   if (type === "commit") {
     const spinner = ora(chalk.blue("Loading commit console...")).info();
     await commit();
+  } else if (type === "switch") {
+    await switchBranch();
   } else {
     console.log(`Unknown type ${type}`);
     process.exit(1);
