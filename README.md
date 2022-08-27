@@ -5,9 +5,14 @@ Simple Git (Github) CLI made in Node.js
 
 The CLI is self-documented, just follow the steps to perform a commit.
 
+```bash
+npm install -g nagit
+nagit commit
+```
+
 ## Usage as project-scope dependency
 
-You should add the dependency to your package.json (>0.0.20) and execute `npx commit`.
+You should add the dependency to your package.json (>0.0.20) and execute `npx nagit`.
 
 ## Requirements
 
