@@ -10,7 +10,11 @@ import { switchBranch } from "./switchBranch.js";
   const [type] = args;
 
   if (!type) {
-    console.log(chalk.red("Please provide a type of update"));
+    console.log(chalk.red("No command specified"));
+    // Show available commands
+    console.log(chalk.green("Available commands:"));
+    console.log(chalk.blue("  - commit"));
+    console.log(chalk.blue("  - switch"));
     process.exit(1);
   }
 

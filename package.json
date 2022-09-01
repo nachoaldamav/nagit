@@ -17,6 +17,9 @@
   "bin": {
     "nagit": "./build/bin/index.js"
   },
+  "files": [
+    "build"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
