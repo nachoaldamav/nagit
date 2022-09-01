@@ -8,7 +8,6 @@ export async function getCurrentBranch() {
     .then((res) => res.stdout.trim())
     .catch(async () => {
       ora(chalk.red("You are not inside a git repository!")).fail();
-      await open("https://i.imgur.com/3xhYtW8.mp4", { wait: true });
       process.exit(1);
     });
 }
