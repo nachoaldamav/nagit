@@ -6,10 +6,8 @@ import gitUntracked from "git-untracked";
 import path from "path";
 import { listGHIssues } from "../functions/listGHIssues.js";
 import { cliAuth } from "../functions/cliAuth.js";
-import { execa } from "execa";
 import chalk from "chalk";
 import { isMono } from "../functions/monorepo.js";
-import ora from "ora";
 import { getCurrentBranch } from "../functions/currentBranch.js";
 const cwd = process.cwd();
 
