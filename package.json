@@ -1,6 +1,6 @@
 {
   "name": "nagit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple Git (Github) CLI made in Node.js",
   "main": "bin/index.js",
   "type": "module",
