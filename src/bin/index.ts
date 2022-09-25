@@ -4,6 +4,7 @@ import process from "process";
 import { commit } from "./commit.js";
 import ora from "ora";
 import { switchBranch } from "./switchBranch.js";
+import release from "./release.js";
 
 (async () => {
   const args = process.argv.slice(2);
@@ -19,12 +20,14 @@ import { switchBranch } from "./switchBranch.js";
   }
 
   if (type === "commit") {
-    const spinner = ora(chalk.blue("Loading commit console...")).info();
-    await commit();
+    ora(chalk.blue("Loading commit console...")).info();
+    return await commit();
   } else if (type === "switch") {
-    await switchBranch();
-  } else {
-    console.log(`Unknown type ${type}`);
-    process.exit(1);
+    return await switchBranch();
+  } else if (type === "release") {
+    return await release();
   }
+
+  console.log(`Unknown type ${type}`);
+  process.exit(1);
 })();
