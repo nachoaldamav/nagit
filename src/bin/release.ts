@@ -23,7 +23,7 @@ export default async function release() {
         type: "list",
         name: "releaseType",
         message: "Select a release type",
-        choices: ["patch", "minor", "major"],
+        choices: ["major", "minor", "patch"],
         loop: false,
       },
       {
