@@ -52,13 +52,7 @@ export async function createRelease(
     currentBranch,
     discussion ? "--discussion-category" : "",
     discussion ? "Releases" : "",
-  ];
-
-  // If no discussion is needed, remove last 2 empty strings
-  if (!discussion) {
-    args.pop();
-    args.pop();
-  }
+  ].filter((arg) => arg !== "");
 
   await execa("gh", [...args], {
     stdio: "inherit",
