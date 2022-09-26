@@ -43,20 +43,24 @@ export async function createRelease(
 
   await execa("git", ["push"], { stdio: "inherit" });
 
-  await execa(
-    "gh",
-    [
-      "release",
-      "create",
-      "v" + newVersion,
-      "--generate-notes",
-      "--target",
-      currentBranch,
-      discussion ? "--discussion-category" : "",
-      discussion ? "Releases" : "",
-    ],
-    {
-      stdio: "inherit",
-    }
-  );
+  const args = [
+    "release",
+    "create",
+    "v" + newVersion,
+    "--generate-notes",
+    "--target",
+    currentBranch,
+    discussion ? "--discussion-category" : "",
+    discussion ? "Releases" : "",
+  ];
+
+  // If no discussion is needed, remove last 2 empty strings
+  if (!discussion) {
+    args.pop();
+    args.pop();
+  }
+
+  await execa("gh", [...args], {
+    stdio: "inherit",
+  });
 }
