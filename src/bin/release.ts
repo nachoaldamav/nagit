@@ -35,9 +35,15 @@ export default async function release() {
         when: () => mono.isMono,
         loop: false,
       },
+      {
+        type: "confirm",
+        name: "discussion",
+        message: "Create a discussion?",
+        default: false,
+      },
     ])
     .then(async (answers) => {
-      const { releaseType, monorepo } = answers;
-      await createRelease(releaseType, monorepo);
+      const { releaseType, monorepo, discussion } = answers;
+      await createRelease(releaseType, monorepo, discussion);
     });
 }

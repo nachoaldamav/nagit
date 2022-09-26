@@ -4,7 +4,11 @@ import { updateVersion } from "./updateVersion.js";
 import ora from "ora";
 import chalk from "chalk";
 
-export async function createRelease(type: string, monorepo: string[]) {
+export async function createRelease(
+  type: string,
+  monorepo: string[],
+  discussion?: boolean
+) {
   let newVersion;
   const currentBranch = await execa("git", [
     "rev-parse",
@@ -48,6 +52,8 @@ export async function createRelease(type: string, monorepo: string[]) {
       "--generate-notes",
       "--target",
       currentBranch,
+      discussion ? "--discussion-category" : "",
+      discussion ? "Releases" : "",
     ],
     {
       stdio: "inherit",
