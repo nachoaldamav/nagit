@@ -7,7 +7,8 @@ import chalk from "chalk";
 export async function createRelease(
   type: string,
   monorepo: string[],
-  discussion?: boolean
+  discussion?: boolean,
+  changelog?: boolean
 ) {
   let newVersion;
   const currentBranch = await execa("git", [
@@ -47,7 +48,7 @@ export async function createRelease(
     "release",
     "create",
     "v" + newVersion,
-    "--generate-notes",
+    changelog ? "--generate-notes" : "",
     "--target",
     currentBranch,
     discussion ? "--discussion-category" : "",

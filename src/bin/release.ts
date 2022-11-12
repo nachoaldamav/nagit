@@ -17,7 +17,7 @@ export default async function release() {
     return;
   }
 
-  return await inquirer
+  return inquirer
     .prompt([
       {
         type: "list",
@@ -37,13 +37,19 @@ export default async function release() {
       },
       {
         type: "confirm",
+        name: "changelog",
+        message: "Generate changelog?",
+        default: true,
+      },
+      {
+        type: "confirm",
         name: "discussion",
         message: "Create a discussion?",
         default: false,
       },
     ])
     .then(async (answers) => {
-      const { releaseType, monorepo, discussion } = answers;
-      await createRelease(releaseType, monorepo, discussion);
+      const { releaseType, monorepo, discussion, changelog } = answers;
+      await createRelease(releaseType, monorepo, discussion, changelog);
     });
 }
